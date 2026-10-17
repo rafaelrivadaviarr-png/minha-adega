@@ -40,7 +40,7 @@ button{font:inherit;color:inherit}
 
 /* Navegação: barra inferior no celular, abas no topo no computador */
 nav.abas{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--sup);border-top:1px solid var(--fio);padding-bottom:env(safe-area-inset-bottom)}
-nav.abas .wrap{display:grid;grid-template-columns:repeat(5,1fr);height:var(--nav);padding:0 6px}
+nav.abas .wrap{display:grid;grid-template-columns:repeat(3,1fr);height:var(--nav);padding:0 6px}
 nav.abas button{background:none;border:0;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:11px;font-weight:500;color:var(--suave)}
 nav.abas svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
 nav.abas button.on{color:var(--acc)}
@@ -148,21 +148,81 @@ dialog .ft{padding:14px 22px calc(14px + env(safe-area-inset-bottom));border-top
 .rodape{margin-top:36px;display:flex;flex-wrap:wrap;gap:18px;font-size:13px}
 .aviso{margin-top:28px;font-size:12px;color:var(--suave)}
 @media (max-width:520px){.titulo{font-size:29px}.perfil{grid-template-columns:repeat(2,1fr)}}
+
+/* Início */
+.hero{font-size:44px;margin-top:6px}
+.acoes-home{display:grid;gap:14px;margin-top:6px}
+@media (min-width:700px){.acoes-home{grid-template-columns:1fr 1fr}}
+.acao-card{display:flex;flex-direction:column;gap:8px}
+.acao{display:flex;align-items:center;gap:16px;padding:22px 20px;border-radius:22px;background:var(--sup);box-shadow:0 0 0 1px var(--fio),0 12px 30px -22px rgba(40,10,15,.5);cursor:pointer;margin:0;color:var(--txt);transition:transform .15s,box-shadow .15s}
+.acao:hover{transform:translateY(-1px);box-shadow:0 0 0 1px var(--acc),0 16px 34px -22px rgba(40,10,15,.6)}
+.acao:active{transform:scale(.99)}
+.acao-card:first-child .acao{background:var(--acc);color:#fff;box-shadow:0 14px 34px -18px rgba(107,29,42,.75)}
+.acao-ic svg{width:44px;height:44px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;display:block}
+.acao-txt{flex:1;display:flex;flex-direction:column;gap:3px}
+.acao-txt strong{font-family:var(--disp);font-weight:400;font-size:22px;line-height:1.15}
+.acao-txt small{font-size:13.5px;opacity:.75}
+.acao-cam{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.16);flex:none}
+.acao-card:not(:first-child) .acao-cam{background:var(--acc-claro);color:var(--acc)}
+.acao-cam svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.escolher{align-self:center;color:var(--suave);font-weight:500}
+.box-lista select{margin-top:2px}
+.resultado{margin-top:30px;padding-top:26px;border-top:1px solid var(--fio);scroll-margin-top:80px}
+.res-topo{display:flex;gap:16px;align-items:center}
+.res-topo img{width:84px;height:84px;object-fit:cover;border-radius:16px;flex:none;box-shadow:0 0 0 1px var(--fio)}
+.etq{display:inline-block;font-size:11.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--acc);margin-bottom:2px}
+.res-titulo{font-family:var(--disp);font-weight:400;font-size:28px;line-height:1.12;letter-spacing:-.01em;margin:0;text-transform:none;display:block;color:var(--txt)}
+.res-sec{margin:28px 0 10px;font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--suave)}
+.res-acoes{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
+.aviso-uva{margin-top:18px;background:var(--sup);border-radius:var(--raio);box-shadow:0 0 0 1px var(--fio);padding:16px}
+.aviso-uva p{font-size:14px;margin-bottom:10px}
+.girando{width:30px;height:30px;margin:30px auto;border-radius:50%;border:3px solid var(--fio);border-top-color:var(--acc);animation:gira .8s linear infinite}
+@keyframes gira{to{transform:rotate(360deg)}}
+.centro{text-align:center}
+.voltar{margin-bottom:14px;display:inline-block}
+@media (max-width:520px){.hero{font-size:38px}.acao{padding:20px 18px}.acao-txt strong{font-size:20px}}
 </style>
 </head>
 <body>
 <header class="topo"><div class="wrap"><div class="marca"><i></i>Minha Adega</div><div class="meta" id="resumo"></div></div></header>
 <nav class="abas"><div class="wrap">
-  <button data-tab="adega" class="on"><svg viewBox="0 0 24 24"><path d="M8 2h8M9 2v4.5c0 1-.6 1.6-1.4 2.2A4 4 0 0 0 6 12v8a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-8a4 4 0 0 0-1.6-3.3C15.6 8.1 15 7.5 15 6.5V2"/><path d="M6 14h12"/></svg><span>Adega</span></button>
+  <button data-tab="inicio" class="on"><svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/></svg><span>Início</span></button>
+  <button data-tab="adega"><svg viewBox="0 0 24 24"><path d="M8 2h8M9 2v4.5c0 1-.6 1.6-1.4 2.2A4 4 0 0 0 6 12v8a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-8a4 4 0 0 0-1.6-3.3C15.6 8.1 15 7.5 15 6.5V2"/><path d="M6 14h12"/></svg><span>Adega</span></button>
   <button data-tab="catalogo"><svg viewBox="0 0 24 24"><path d="M4 5h16M4 12h16M4 19h10"/></svg><span>Catálogo</span></button>
-  <button data-tab="vinho"><svg viewBox="0 0 24 24"><path d="M7 2h10l-1 7a4 4 0 0 1-8 0z"/><path d="M12 13v8M8 21h8"/></svg><span>Com o vinho</span></button>
-  <button data-tab="comida"><svg viewBox="0 0 24 24"><path d="M5 2v8a2 2 0 0 0 2 2v10M9 2v8a2 2 0 0 1-2 2M7 2v6"/><path d="M17 22V2c-2 1.5-3 4-3 7s1 4 3 4"/></svg><span>Para o prato</span></button>
-  <button data-tab="uvas"><svg viewBox="0 0 24 24"><circle cx="9" cy="9" r="2.6"/><circle cx="15" cy="9" r="2.6"/><circle cx="12" cy="13.5" r="2.6"/><circle cx="9" cy="18" r="2.6"/><circle cx="15" cy="18" r="2.6"/><path d="M12 6V2.5c1 0 3 .5 4 2"/></svg><span>Uvas</span></button>
 </div></nav>
 <main class="wrap">
-  <section id="adega" class="on">
+  <section id="inicio" class="on">
+    <h1 class="titulo hero">O que vamos<br>beber hoje?</h1>
+    <p class="sub">Fotografe o rótulo para saber o que servir. Ou fotografe o prato para saber qual vinho abrir.</p>
+    <div class="acoes-home">
+      <div class="acao-card">
+        <label class="acao">
+          <span class="acao-ic"><svg viewBox="0 0 48 48"><path d="M20 4h8v9c0 2 1 3 2.5 4.5A8 8 0 0 1 33 23v18a3 3 0 0 1-3 3H18a3 3 0 0 1-3-3V23a8 8 0 0 1 2.5-5.5C19 16 20 15 20 13z"/><path d="M15 27h18v9H15z"/></svg></span>
+          <span class="acao-txt"><strong>Fotografar o rótulo</strong><small>Veja os pratos que combinam com o vinho</small></span>
+          <span class="acao-cam"><svg viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13.5" r="3.5"/></svg></span>
+          <input type="file" id="camRotulo" accept="image/*" capture="environment" hidden>
+        </label>
+        <button class="link escolher" data-abrir="boxVinho">ou escolher um vinho da lista</button>
+        <div id="boxVinho" class="box-lista" hidden><select id="selVinho"></select></div>
+      </div>
+      <div class="acao-card">
+        <label class="acao">
+          <span class="acao-ic"><svg viewBox="0 0 48 48"><circle cx="24" cy="26" r="15"/><circle cx="24" cy="26" r="9"/><path d="M6 6v10a3 3 0 0 0 3 3v23M12 6v10a3 3 0 0 1-3 3M9 6v8M42 42V6c-3 2-5 6-5 11s2 7 5 7"/></svg></span>
+          <span class="acao-txt"><strong>Fotografar o prato</strong><small>Descubra qual vinho abrir</small></span>
+          <span class="acao-cam"><svg viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13.5" r="3.5"/></svg></span>
+          <input type="file" id="camPrato" accept="image/*" capture="environment" hidden>
+        </label>
+        <button class="link escolher" data-abrir="boxPrato">ou escolher um prato da lista</button>
+        <div id="boxPrato" class="box-lista" hidden><select id="selPrato"></select></div>
+      </div>
+    </div>
+    <div id="resultado" class="resultado" hidden></div>
+    <p class="aviso centro"><button class="link" data-tab="uvas">Guia de uvas</button></p>
+  </section>
+
+  <section id="adega">
     <h1 class="titulo">Sua adega</h1>
-    <p class="sub">As garrafas que você tem em casa, agrupadas por estilo, com o ponto de cada safra.</p>
+    <p class="sub">As garrafas que você tem em casa, com o ponto de cada safra.</p>
     <div class="barra">
       <button class="btn acc" id="btnNovo">Adicionar vinho</button>
       <input class="busca" id="busca" placeholder="Buscar na adega">
@@ -179,7 +239,7 @@ dialog .ft{padding:14px 22px calc(14px + env(safe-area-inset-bottom));border-top
 
   <section id="catalogo">
     <h1 class="titulo">Catálogo</h1>
-    <p class="sub" id="catSub">Os rótulos da Casa Rio Verde, em Belo Horizonte. Harmonize qualquer um ou leve para a sua adega.</p>
+    <p class="sub" id="catSub">Os rótulos da Casa Rio Verde, em Belo Horizonte.</p>
     <div class="barra">
       <input class="busca" id="catBusca" placeholder="Nome, produtor ou uva">
       <select id="catTipo"><option value="">Todos os tipos</option></select>
@@ -188,25 +248,9 @@ dialog .ft{padding:14px 22px calc(14px + env(safe-area-inset-bottom));border-top
     <div id="catLista"></div>
   </section>
 
-  <section id="vinho">
-    <h1 class="titulo">O que servir</h1>
-    <p class="sub">Escolha um vinho e veja os pratos que combinam com ele, e os que é melhor evitar.</p>
-    <div class="form">
-      <div><label>Vinho da adega</label><select id="selVinho"></select></div>
-      <div><label>Ou uma uva</label><select id="selUva"></select></div>
-    </div>
-    <div id="resVinho"></div>
-  </section>
-
-  <section id="comida">
-    <h1 class="titulo">Que vinho abrir</h1>
-    <p class="sub">Escolha o prato. Mostramos o que você já tem em casa e as melhores opções da loja.</p>
-    <div class="form"><div class="full"><label>Prato</label><select id="selPrato"></select></div></div>
-    <div id="resComida"></div>
-  </section>
-
   <section id="uvas">
-    <h1 class="titulo">Uvas</h1>
+    <button class="link voltar" data-tab="inicio">← Início</button>
+    <h1 class="titulo">Guia de uvas</h1>
     <p class="sub">O perfil de cada casta e os pratos que costumam acompanhá-la.</p>
     <div class="uvas-grade" id="listaUvas"></div>
   </section>
