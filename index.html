@@ -2,144 +2,196 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Minha Adega</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%236b1d2a'/><rect x='13' y='7' width='6' height='18' rx='3' fill='%23f5f2ee'/></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:ital@0;1&display=swap" rel="stylesheet">
-<meta name="theme-color" content="#f3efe6">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%237a1f2b'/><text x='16' y='23' font-family='Georgia' font-size='20' fill='%23f3efe6' text-anchor='middle'>A</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Gloock&family=Schibsted+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+<meta name="theme-color" content="#f5f2ee" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0f0d0c" media="(prefers-color-scheme: dark)">
 <style>
 :root{
-  --papel:#f3efe6;--papel2:#ebe5d8;--tinta:#1f1b18;--suave:#6f665d;--fio:#d6cebf;
-  --acc:#7a1f2b;--ok:#3d5a2a;--warn:#9a6a14;--bad:#9b2c2c;
-  --tinto:#7a1f2b;--branco:#b8963a;--rose:#c7697e;--espumante:#9c8f5c;--sobremesa:#a8641e;--fortificado:#5a2a1c;
-  --serif:'Libre Caslon Text',Georgia,'Times New Roman',serif;
-  --sans:system-ui,-apple-system,'Segoe UI',Roboto,'Helvetica Neue',sans-serif;
+  --fundo:#f5f2ee;--sup:#ffffff;--sup2:#efebe5;--txt:#16110f;--suave:#71675f;--fio:#e3ddd5;
+  --acc:#6b1d2a;--acc-claro:#f3e6e6;--ok:#2f6b4f;--warn:#a1661b;--bad:#a3302f;
+  --tinto:#6b1d2a;--branco:#c7a548;--rose:#d47e8f;--espumante:#a99d6b;--sobremesa:#b46a22;--fortificado:#4e2418;
+  --disp:'Gloock',Georgia,serif;--sans:'Schibsted Grotesk',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --raio:14px;--nav:64px;
 }
 @media (prefers-color-scheme:dark){:root{
-  --papel:#171513;--papel2:#211e1b;--tinta:#ebe5da;--suave:#9d958a;--fio:#35302b;
-  --acc:#d0727a;--ok:#9bbd7a;--warn:#d9a84e;--bad:#e07b72;
-  --tinto:#c25a63;--branco:#d8bd6a;--rose:#e095a6;--espumante:#c9bc87;--sobremesa:#d49250;--fortificado:#b67a5e;
+  --fundo:#0f0d0c;--sup:#1a1716;--sup2:#24201e;--txt:#f2ede8;--suave:#a39990;--fio:#2e2926;
+  --acc:#d88a95;--acc-claro:#2c1b1e;--ok:#7fc3a0;--warn:#e2ac5c;--bad:#ec8a80;
+  --tinto:#c4576a;--branco:#dcc172;--rose:#e7a1ae;--espumante:#cfc394;--sobremesa:#dd9a55;--fortificado:#b98066;
 }}
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--papel);color:var(--tinta);font-family:var(--sans);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
-.wrap{max-width:860px;margin:0 auto;padding:0 20px}
-a{color:inherit}
+html{-webkit-text-size-adjust:100%}
+[hidden]{display:none!important}
+body{background:var(--fundo);color:var(--txt);font-family:var(--sans);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased;padding-bottom:calc(var(--nav) + env(safe-area-inset-bottom))}
+button{font:inherit;color:inherit}
+.wrap{max-width:880px;margin:0 auto;padding:0 20px}
 
-.topo{border-bottom:1px solid var(--tinta)}
-.topo .wrap{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding-top:22px;padding-bottom:10px}
-.marca{font-family:var(--serif);font-size:30px;letter-spacing:-.01em;line-height:1}
-.marca em{font-style:italic;color:var(--acc)}
-.meta{font-size:12px;color:var(--suave);font-variant-numeric:tabular-nums;text-align:right}
+/* Topo */
+.topo{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--fundo) 86%,transparent);backdrop-filter:saturate(1.4) blur(14px);-webkit-backdrop-filter:saturate(1.4) blur(14px);border-bottom:1px solid var(--fio)}
+.topo .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;height:60px}
+.marca{font-family:var(--disp);font-size:24px;letter-spacing:-.01em;display:flex;align-items:center;gap:10px}
+.marca i{width:9px;height:22px;border-radius:5px;background:var(--acc);display:inline-block}
+.meta{font-size:12.5px;color:var(--suave);text-align:right;line-height:1.35;font-variant-numeric:tabular-nums}
+.meta b{color:var(--txt);font-weight:600}
 
-nav{border-bottom:1px solid var(--fio);position:sticky;top:0;z-index:5;background:var(--papel)}
-nav .wrap{display:flex;gap:22px;overflow-x:auto}
-nav button{background:none;border:0;border-bottom:2px solid transparent;margin-bottom:-1px;padding:12px 0 10px;font:inherit;font-size:14px;color:var(--suave);cursor:pointer;white-space:nowrap}
-nav button.on{color:var(--tinta);border-color:var(--tinta)}
-main.wrap{padding-top:24px;padding-bottom:48px}
-section{display:none}section.on{display:block}
-.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+/* Navegação: barra inferior no celular, abas no topo no computador */
+nav.abas{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--sup);border-top:1px solid var(--fio);padding-bottom:env(safe-area-inset-bottom)}
+nav.abas .wrap{display:grid;grid-template-columns:repeat(5,1fr);height:var(--nav);padding:0 6px}
+nav.abas button{background:none;border:0;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:11px;font-weight:500;color:var(--suave)}
+nav.abas svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+nav.abas button.on{color:var(--acc)}
+@media (min-width:760px){
+  body{padding-bottom:0}
+  nav.abas{position:sticky;top:60px;bottom:auto;border-top:0;border-bottom:1px solid var(--fio);background:var(--fundo)}
+  nav.abas .wrap{display:flex;gap:6px;height:52px;align-items:center;padding:0 20px}
+  nav.abas button{flex-direction:row;gap:8px;font-size:14px;padding:7px 14px;border-radius:999px}
+  nav.abas svg{width:17px;height:17px}
+  nav.abas button.on{background:var(--acc-claro)}
+}
 
-.btn{background:var(--tinta);color:var(--papel);border:1px solid var(--tinta);border-radius:3px;padding:9px 14px;font:inherit;font-size:14px;cursor:pointer}
-.btn:hover{background:var(--acc);border-color:var(--acc)}
-.btn.sec{background:transparent;color:var(--tinta);border-color:var(--fio)}
-.btn.sec:hover{border-color:var(--tinta);background:transparent}
-.btn.sm{padding:5px 10px;font-size:13px}
-.btn:disabled{opacity:.4;cursor:not-allowed}
-.link{background:none;border:0;padding:0;font:inherit;font-size:13px;color:var(--suave);cursor:pointer;text-decoration:underline;text-decoration-color:var(--fio);text-underline-offset:3px}
-.link:hover{color:var(--acc);text-decoration-color:currentColor}
-.link:disabled{opacity:.4;cursor:not-allowed}
-input,select,textarea{font:inherit;color:var(--tinta);background:transparent;border:0;border-bottom:1px solid var(--fio);border-radius:0;padding:8px 2px;width:100%}
-select{background:var(--papel)}
-input:focus,select:focus,textarea:focus{outline:0;border-bottom-color:var(--tinta)}
-textarea{border:1px solid var(--fio);padding:8px}
-label{font-size:12px;color:var(--suave);display:block;margin-bottom:2px}
+main.wrap{padding-top:28px;padding-bottom:56px}
+section{display:none}section.on{display:block;animation:entra .28s ease}
+@keyframes entra{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.titulo{font-family:var(--disp);font-size:34px;line-height:1.05;letter-spacing:-.015em;margin-bottom:6px}
+.sub{color:var(--suave);font-size:14px;margin-bottom:20px;max-width:560px}
+.barra{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:18px}
+.barra .busca{flex:1;min-width:200px}
+
+/* Controles */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:var(--txt);color:var(--fundo);border:0;border-radius:999px;padding:11px 18px;font-size:14px;font-weight:600;cursor:pointer;transition:transform .12s,opacity .12s;white-space:nowrap}
+.btn:hover{opacity:.88}.btn:active{transform:scale(.98)}
+.btn.sec{background:transparent;color:var(--txt);box-shadow:inset 0 0 0 1px var(--fio)}
+.btn.acc{background:var(--acc);color:#fff}
+.btn.sm{padding:7px 13px;font-size:13px}
+.btn.largo{display:flex;width:100%}
+.btn:disabled{opacity:.35;cursor:not-allowed}
+.link{background:none;border:0;padding:0;font-size:13px;font-weight:500;color:var(--acc);cursor:pointer}
+.link:hover{text-decoration:underline;text-underline-offset:3px}
+.link:disabled{color:var(--suave);opacity:.5;cursor:not-allowed;text-decoration:none}
+input,select,textarea{font:inherit;color:var(--txt);background:var(--sup);border:1px solid var(--fio);border-radius:12px;padding:11px 14px;width:100%;transition:border-color .15s,box-shadow .15s}
+input:focus,select:focus,textarea:focus{outline:0;border-color:var(--acc);box-shadow:0 0 0 4px var(--acc-claro)}
+select{appearance:none;-webkit-appearance:none;padding-right:34px;background-image:linear-gradient(45deg,transparent 50%,var(--suave) 50%),linear-gradient(135deg,var(--suave) 50%,transparent 50%);background-position:calc(100% - 18px) 52%,calc(100% - 13px) 52%;background-size:5px 5px;background-repeat:no-repeat}
+.barra select{width:auto}
+label{font-size:12.5px;font-weight:500;color:var(--suave);display:block;margin-bottom:6px}
 .muted{color:var(--suave);font-size:13px}
 
-/* Carta de vinhos */
-.grupo{font-family:var(--serif);font-size:13px;font-weight:400;letter-spacing:.14em;text-transform:uppercase;color:var(--suave);
-  display:flex;justify-content:space-between;border-bottom:1px solid var(--tinta);padding-bottom:6px;margin:30px 0 0}
-.grupo:first-child{margin-top:6px}
-.vinho{display:grid;grid-template-columns:1fr auto;gap:2px 16px;padding:14px 0 13px;border-bottom:1px solid var(--fio)}
-.vinho h3{font-family:var(--serif);font-size:19px;font-weight:400;line-height:1.25}
-.vinho .safra{font-family:var(--serif);font-size:19px;font-variant-numeric:tabular-nums;text-align:right}
-.vinho .det{font-size:13px;color:var(--suave)}
-.vinho .qtd{font-size:12px;color:var(--suave);text-align:right;font-variant-numeric:tabular-nums}
-.vinho .extra{grid-column:1/-1;font-size:13px;margin-top:4px}
-.vinho .extra i{font-family:var(--serif);color:var(--suave)}
-.vinho .acoes{grid-column:1/-1;display:flex;gap:16px;margin-top:6px}
-.est{font-size:12px}.est.ponto{color:var(--ok)}.est.jovem{color:var(--warn)}.est.passando{color:var(--bad)}
-.nota{color:var(--acc);font-size:12px;letter-spacing:1px}
+/* Listas de vinhos */
+.grupo{display:flex;align-items:baseline;justify-content:space-between;margin:30px 0 10px;font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--suave)}
+.grupo:first-child{margin-top:4px}
+.lista{background:var(--sup);border-radius:var(--raio);box-shadow:0 0 0 1px var(--fio);overflow:hidden}
+.vinho{position:relative;display:grid;grid-template-columns:1fr auto;gap:2px 16px;padding:16px 18px 15px 22px;border-top:1px solid var(--fio)}
+.vinho:first-child{border-top:0}
+.vinho::before{content:'';position:absolute;left:0;top:16px;bottom:16px;width:3px;border-radius:0 3px 3px 0;background:var(--cor,var(--fio))}
+.vinho h3{font-family:var(--disp);font-weight:400;font-size:19px;line-height:1.25;letter-spacing:-.005em}
+.vinho .safra{font-family:var(--disp);font-size:22px;line-height:1;text-align:right;font-variant-numeric:tabular-nums}
+.vinho .det{font-size:13px;color:var(--suave);margin-top:2px}
+.vinho .qtd{font-size:12px;color:var(--suave);text-align:right;margin-top:4px;white-space:nowrap}
+.vinho .extra{grid-column:1/-1;font-size:13px;margin-top:6px;display:flex;flex-wrap:wrap;gap:4px 12px;align-items:center}
+.vinho .extra .com{color:var(--suave);flex-basis:100%}
+.vinho .acoes{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:18px;margin-top:10px}
+.est{font-size:12px;font-weight:500;padding:2px 9px;border-radius:999px;background:var(--sup2)}
+.est.ponto{color:var(--ok)}.est.jovem{color:var(--warn)}.est.passando{color:var(--bad)}
+.nota{color:var(--acc);font-size:11px;letter-spacing:2px}
+.mais{display:flex;justify-content:center;margin-top:16px}
 
-h2{font-family:var(--serif);font-size:13px;font-weight:400;letter-spacing:.14em;text-transform:uppercase;color:var(--suave);border-bottom:1px solid var(--tinta);padding-bottom:6px;margin:30px 0 0}
-.ficha{padding:16px 0 4px}
-.ficha h3{font-family:var(--serif);font-size:26px;font-weight:400;line-height:1.2}
-.res{display:grid;grid-template-columns:52px 1fr;gap:0 14px;padding:13px 0;border-bottom:1px solid var(--fio)}
-.res strong{font-family:var(--serif);font-size:17px;font-weight:400}
-.score{font-family:var(--serif);font-size:26px;line-height:1;font-variant-numeric:tabular-nums}
-.score small{display:block;font-family:var(--sans);font-size:10px;color:var(--suave);margin-top:4px;line-height:1.2}
-.why{font-size:13px;color:var(--suave);margin-top:3px}.why li{list-style:none}
-.why .p::before{content:'+ ';color:var(--ok)}.why .c::before{content:'− ';color:var(--bad)}
-.perfil{display:grid;grid-template-columns:repeat(4,auto);justify-content:start;gap:2px 22px;margin-top:10px;font-size:12px;color:var(--suave)}
-.perfil b{display:block;font-weight:400;color:var(--tinta);letter-spacing:2px;font-size:11px}
+/* Resultados de harmonização */
+h2{display:flex;align-items:baseline;justify-content:space-between;margin:32px 0 10px;font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--suave)}
+.ficha{background:var(--sup);border-radius:var(--raio);box-shadow:0 0 0 1px var(--fio);padding:20px 22px;margin-top:6px}
+.ficha h3{font-family:var(--disp);font-weight:400;font-size:28px;line-height:1.15;letter-spacing:-.01em}
+.res{display:grid;grid-template-columns:64px 1fr;gap:0 14px;padding:16px 18px;border-top:1px solid var(--fio);background:var(--sup)}
+.res:first-of-type{border-top:0}
+.res strong{font-family:var(--disp);font-weight:400;font-size:18px;line-height:1.3}
+.score{font-family:var(--disp);font-size:34px;line-height:1;font-variant-numeric:tabular-nums}
+.score small{display:block;font-family:var(--sans);font-size:11px;font-weight:500;color:var(--suave);margin-top:6px;line-height:1.2}
+.why{font-size:13px;color:var(--suave);margin-top:6px}.why li{list-style:none;padding:1px 0}
+.why .p::before{content:'';display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--ok);margin-right:8px;vertical-align:middle}
+.why .c::before{content:'';display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--bad);margin-right:8px;vertical-align:middle}
+.bloco{border-radius:var(--raio);box-shadow:0 0 0 1px var(--fio);overflow:hidden}
+.perfil{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:16px}
+.perfil div{font-size:12px;color:var(--suave)}
+.perfil i{display:block;height:4px;border-radius:2px;background:var(--sup2);margin-top:6px;overflow:hidden;position:relative}
+.perfil i::after{content:'';position:absolute;inset:0;width:var(--v);background:var(--acc);border-radius:2px}
+.uvas-grade{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.uva{background:var(--sup);border-radius:var(--raio);box-shadow:0 0 0 1px var(--fio);padding:18px}
+.uva h3{font-family:var(--disp);font-weight:400;font-size:20px}
 
-.uva{padding:14px 0;border-bottom:1px solid var(--fio)}
-.uva h3{font-family:var(--serif);font-size:18px;font-weight:400}
-.uva .perfil{margin-top:6px}
-
-.chips{display:flex;flex-wrap:wrap;gap:4px 6px;max-height:200px;overflow:auto;padding:4px 0}
-.chip{border:1px solid var(--fio);border-radius:3px;padding:3px 8px;font-size:13px;cursor:pointer;user-select:none}
-.chip.on{background:var(--tinta);color:var(--papel);border-color:var(--tinta)}
-.form{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px 18px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;max-height:210px;overflow:auto}
+.chip{border:0;box-shadow:inset 0 0 0 1px var(--fio);border-radius:999px;padding:6px 12px;font-size:13px;cursor:pointer;user-select:none;background:var(--sup)}
+.chip.on{background:var(--txt);color:var(--fundo);box-shadow:none}
+.form{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:16px}
 .form .full{grid-column:1/-1}
-dialog{border:1px solid var(--tinta);border-radius:0;padding:0;width:min(620px,calc(100% - 24px));background:var(--papel);color:var(--tinta)}
-dialog::backdrop{background:rgba(20,17,15,.55)}
-dialog .hd{padding:14px 18px;border-bottom:1px solid var(--fio);display:flex;justify-content:space-between;align-items:center}
-dialog .hd strong{font-family:var(--serif);font-size:20px;font-weight:400}
-dialog .bd{padding:18px;max-height:72vh;overflow:auto}
-dialog .ft{padding:12px 18px;border-top:1px solid var(--fio);display:flex;gap:8px;justify-content:flex-end}
-.fechar{background:none;border:0;font-size:22px;line-height:1;color:var(--suave);cursor:pointer;padding:0 2px}
-.ia-box{border:1px solid var(--fio);padding:12px;background:var(--papel2)}
-.ia-box img{max-height:110px;margin-top:8px;display:block}
-.discordo{background:none;border:0;padding:0;margin-top:4px;font:inherit;font-size:12px;color:var(--suave);cursor:pointer;text-decoration:underline;text-decoration-color:var(--fio);text-underline-offset:3px}
-.discordo:hover{color:var(--acc)}
+dialog{border:0;padding:0;margin:auto;width:min(620px,100%);max-height:92vh;background:var(--sup);color:var(--txt);border-radius:22px;box-shadow:0 30px 80px -20px rgba(0,0,0,.45)}
+dialog::backdrop{background:rgba(15,12,11,.5);backdrop-filter:blur(3px)}
+@media (max-width:620px){dialog{margin:auto 0 0;max-width:100%;border-radius:22px 22px 0 0}}
+dialog .hd{padding:18px 22px 10px;display:flex;justify-content:space-between;align-items:center}
+dialog .hd strong{font-family:var(--disp);font-weight:400;font-size:24px}
+dialog .bd{padding:10px 22px 18px;max-height:68vh;overflow:auto}
+dialog .ft{padding:14px 22px calc(14px + env(safe-area-inset-bottom));border-top:1px solid var(--fio);display:flex;gap:10px;justify-content:flex-end}
+.fechar{background:var(--sup2);border:0;width:34px;height:34px;border-radius:50%;font-size:20px;line-height:1;color:var(--suave);cursor:pointer}
+.ia-box{background:var(--sup2);border-radius:var(--raio);padding:14px}
+.ia-box img{max-height:110px;border-radius:10px;margin-top:10px;display:block}
 .campo-busca{position:relative}
-.sugestoes{position:absolute;left:0;right:0;top:100%;z-index:10;background:var(--papel);border:1px solid var(--tinta);border-top:0;max-height:260px;overflow:auto}
-.sugestoes button{display:block;width:100%;text-align:left;background:none;border:0;border-bottom:1px solid var(--fio);padding:8px 10px;font:inherit;color:var(--tinta);cursor:pointer}
-.sugestoes button:hover,.sugestoes button.on{background:var(--papel2)}
+.sugestoes{position:absolute;left:0;right:0;top:calc(100% - 22px);z-index:10;background:var(--sup);border-radius:12px;box-shadow:0 0 0 1px var(--fio),0 18px 40px -16px rgba(0,0,0,.35);max-height:280px;overflow:auto}
+.sugestoes button{display:block;width:100%;text-align:left;background:none;border:0;border-top:1px solid var(--fio);padding:10px 14px;cursor:pointer}
+.sugestoes button:first-child{border-top:0}
+.sugestoes button:hover{background:var(--sup2)}
 .sugestoes small{display:block;color:var(--suave);font-size:12px}
-.vazio{padding:28px 0;color:var(--suave);font-family:var(--serif);font-size:17px;font-style:italic}
-.toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:var(--tinta);color:var(--papel);padding:9px 14px;font-size:14px;z-index:50;max-width:calc(100% - 32px)}
-footer .wrap{border-top:1px solid var(--fio);padding-top:12px;padding-bottom:28px;font-size:12px;color:var(--suave);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
-@media (max-width:520px){.marca{font-size:25px}.perfil{grid-template-columns:repeat(2,auto)}}
+.discordo{background:none;border:0;padding:0;margin-top:8px;font-size:12.5px;font-weight:500;color:var(--suave);cursor:pointer}
+.discordo:hover{color:var(--acc)}
+.vazio{padding:36px 22px;text-align:center;color:var(--suave);background:var(--sup);border-radius:var(--raio);box-shadow:0 0 0 1px var(--fio)}
+.toast{position:fixed;left:50%;bottom:calc(var(--nav) + 18px);transform:translateX(-50%);background:var(--txt);color:var(--fundo);padding:11px 18px;border-radius:999px;font-size:14px;z-index:50;max-width:calc(100% - 32px)}
+@media (min-width:760px){.toast{bottom:24px}}
+.rodape{margin-top:36px;display:flex;flex-wrap:wrap;gap:18px;font-size:13px}
+.aviso{margin-top:28px;font-size:12px;color:var(--suave)}
+@media (max-width:520px){.titulo{font-size:29px}.perfil{grid-template-columns:repeat(2,1fr)}}
 </style>
 </head>
 <body>
-<header class="topo"><div class="wrap"><div class="marca">Minha <em>Adega</em></div><div class="meta" id="resumo"></div></div></header>
-<nav><div class="wrap">
-  <button data-tab="adega" class="on">Carta</button>
-  <button data-tab="vinho">O que servir com o vinho</button>
-  <button data-tab="comida">Que vinho abrir</button>
-  <button data-tab="uvas">Uvas</button>
+<header class="topo"><div class="wrap"><div class="marca"><i></i>Minha Adega</div><div class="meta" id="resumo"></div></div></header>
+<nav class="abas"><div class="wrap">
+  <button data-tab="adega" class="on"><svg viewBox="0 0 24 24"><path d="M8 2h8M9 2v4.5c0 1-.6 1.6-1.4 2.2A4 4 0 0 0 6 12v8a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-8a4 4 0 0 0-1.6-3.3C15.6 8.1 15 7.5 15 6.5V2"/><path d="M6 14h12"/></svg><span>Adega</span></button>
+  <button data-tab="catalogo"><svg viewBox="0 0 24 24"><path d="M4 5h16M4 12h16M4 19h10"/></svg><span>Catálogo</span></button>
+  <button data-tab="vinho"><svg viewBox="0 0 24 24"><path d="M7 2h10l-1 7a4 4 0 0 1-8 0z"/><path d="M12 13v8M8 21h8"/></svg><span>Com o vinho</span></button>
+  <button data-tab="comida"><svg viewBox="0 0 24 24"><path d="M5 2v8a2 2 0 0 0 2 2v10M9 2v8a2 2 0 0 1-2 2M7 2v6"/><path d="M17 22V2c-2 1.5-3 4-3 7s1 4 3 4"/></svg><span>Para o prato</span></button>
+  <button data-tab="uvas"><svg viewBox="0 0 24 24"><circle cx="9" cy="9" r="2.6"/><circle cx="15" cy="9" r="2.6"/><circle cx="12" cy="13.5" r="2.6"/><circle cx="9" cy="18" r="2.6"/><circle cx="15" cy="18" r="2.6"/><path d="M12 6V2.5c1 0 3 .5 4 2"/></svg><span>Uvas</span></button>
 </div></nav>
 <main class="wrap">
   <section id="adega" class="on">
-    <div class="row">
-      <button class="btn" id="btnNovo">Adicionar vinho</button>
-      <input id="busca" placeholder="Buscar na adega" style="flex:1;min-width:160px">
-      <select id="filtroTipo" style="width:auto"><option value="">Todos os tipos</option></select>
+    <h1 class="titulo">Sua adega</h1>
+    <p class="sub">As garrafas que você tem em casa, agrupadas por estilo, com o ponto de cada safra.</p>
+    <div class="barra">
+      <button class="btn acc" id="btnNovo">Adicionar vinho</button>
+      <input class="busca" id="busca" placeholder="Buscar na adega">
+      <select id="filtroTipo"><option value="">Todos os tipos</option></select>
     </div>
     <div id="listaAdega"></div>
-    <div class="row" style="margin-top:22px;gap:18px">
+    <div class="rodape">
       <button class="link" id="btnExportar">Exportar backup</button>
       <label class="link" style="margin:0">Importar backup<input type="file" id="arqImportar" accept=".json" hidden></label>
       <button class="link" id="btnExemplos">Carregar exemplos</button>
     </div>
+    <p class="aviso">Os vinhos ficam salvos neste aparelho. Use o backup para levar a outro.</p>
+  </section>
+
+  <section id="catalogo">
+    <h1 class="titulo">Catálogo</h1>
+    <p class="sub" id="catSub">Os rótulos da Casa Rio Verde, em Belo Horizonte. Harmonize qualquer um ou leve para a sua adega.</p>
+    <div class="barra">
+      <input class="busca" id="catBusca" placeholder="Nome, produtor ou uva">
+      <select id="catTipo"><option value="">Todos os tipos</option></select>
+      <select id="catPais"><option value="">Todos os países</option></select>
+    </div>
+    <div id="catLista"></div>
   </section>
 
   <section id="vinho">
-    <div class="form" style="margin-bottom:12px">
+    <h1 class="titulo">O que servir</h1>
+    <p class="sub">Escolha um vinho e veja os pratos que combinam com ele, e os que é melhor evitar.</p>
+    <div class="form">
       <div><label>Vinho da adega</label><select id="selVinho"></select></div>
       <div><label>Ou uma uva</label><select id="selUva"></select></div>
     </div>
@@ -147,25 +199,28 @@ footer .wrap{border-top:1px solid var(--fio);padding-top:12px;padding-bottom:28p
   </section>
 
   <section id="comida">
-    <div class="form" style="margin-bottom:12px">
-      <div class="full"><label>Qual é o prato?</label><select id="selPrato"></select></div>
-    </div>
+    <h1 class="titulo">Que vinho abrir</h1>
+    <p class="sub">Escolha o prato. Mostramos o que você já tem em casa e as melhores opções da loja.</p>
+    <div class="form"><div class="full"><label>Prato</label><select id="selPrato"></select></div></div>
     <div id="resComida"></div>
   </section>
 
-  <section id="uvas"><div id="listaUvas"></div></section>
+  <section id="uvas">
+    <h1 class="titulo">Uvas</h1>
+    <p class="sub">O perfil de cada casta e os pratos que costumam acompanhá-la.</p>
+    <div class="uvas-grade" id="listaUvas"></div>
+  </section>
 </main>
-<footer><div class="wrap"><span>Os vinhos ficam salvos neste aparelho. Use o backup para levar a outro.</span><span>Beba com moderação.</span></div></footer>
 
 <dialog id="dlg">
   <form method="dialog" id="frm">
     <div class="hd"><strong id="dlgTitulo">Novo vinho</strong><button class="fechar" value="cancel" formnovalidate aria-label="Fechar">×</button></div>
     <div class="bd form">
       <div class="full ia-box">
-        <label class="btn" style="margin:0;text-align:center;display:block">Fotografar o rótulo<input type="file" id="fotoRotulo" accept="image/*" capture="environment" hidden></label>
+        <label class="btn largo" style="margin:0">Fotografar o rótulo<input type="file" id="fotoRotulo" accept="image/*" capture="environment" hidden></label>
         <div id="iaStatus" class="muted" style="margin-top:6px"></div>
       </div>
-      <div class="full campo-busca"><label>Nome do vinho *</label><input name="nome" required autocomplete="off" placeholder="Comece a digitar para buscar no catálogo"><div id="sugestoes" class="sugestoes" hidden></div><div id="catStatus" class="muted" style="margin-top:4px"></div></div>
+      <div class="full campo-busca"><label>Nome do vinho *</label><input name="nome" required autocomplete="off" placeholder="Digite para buscar entre 1.488 rótulos"><div id="sugestoes" class="sugestoes" hidden></div><div id="catStatus" class="muted" style="margin-top:4px"></div></div>
       <div><label>Marca / produtor</label><input name="produtor" placeholder="Ex.: Concha y Toro"></div>
       <div><label>País / região</label><input name="regiao" placeholder="Ex.: Chile, Vale Central"></div>
       <div><label>Tipo *</label><select name="tipo" required></select></div>

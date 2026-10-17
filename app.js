@@ -67,18 +67,18 @@
     const garrafas = adega.reduce((s, v) => s + Number(v.quantidade || 0), 0);
     const valor = adega.reduce((s, v) => s + Number(v.quantidade || 0) * Number(v.preco || 0), 0);
     $('#resumo').innerHTML = adega.length
-      ? plural(garrafas, 'garrafa', 'garrafas') + (valor ? `<br>R$ ${valor.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : '')
+      ? `<b>${garrafas}</b> ${garrafas === 1 ? 'garrafa' : 'garrafas'}` + (valor ? `<br>R$ ${valor.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : '')
       : '';
     const item = v => {
       const j = H.janela(v);
       const top = H.pratosParaVinho(v).slice(0, 3).map(r => r.prato.nome.split(' / ')[0].toLowerCase()).join(', ');
       const qtd = Number(v.quantidade || 0);
-      return `<article class="vinho">
+      return `<article class="vinho" style="--cor:var(--${v.tipo})">
         <div><h3>${esc(v.nome)}</h3>
           <div class="det">${esc([v.produtor, v.regiao].filter(Boolean).join(', '))}${v.produtor || v.regiao ? ' · ' : ''}${esc(nomesUvas(v))}</div></div>
         <div><div class="safra">${v.safra || 'NV'}</div><div class="qtd">${qtd ? plural(qtd, 'garrafa', 'garrafas') : 'acabou'}</div></div>
-        <div class="extra">${estrelas(Number(v.qualidade))}${v.qualidade && j ? ' &nbsp; ' : ''}${j ? `<span class="est ${j.status}">${j.texto}</span>` : ''}
-          <div><i>com ${esc(top)}</i></div></div>
+        <div class="extra">${estrelas(Number(v.qualidade))}${j ? `<span class="est ${j.status}">${j.texto}</span>` : ''}
+          <span class="com">Vai bem com ${esc(top)}</span></div>
         <div class="acoes">
           <button class="link" data-harm="${v.id}">Harmonizar</button>
           <button class="link" data-edit="${v.id}">Editar</button>
@@ -88,7 +88,7 @@
     $('#listaAdega').innerHTML = lista.length
       ? Object.keys(GRUPOS).map(t => {
           const doTipo = lista.filter(v => v.tipo === t);
-          return doTipo.length ? `<h2 class="grupo"><span>${GRUPOS[t]}</span><span>${doTipo.length}</span></h2>${doTipo.map(item).join('')}` : '';
+          return doTipo.length ? `<div class="grupo"><span>${GRUPOS[t]}</span><span>${doTipo.length}</span></div><div class="lista">${doTipo.map(item).join('')}</div>` : '';
         }).join('')
       : `<p class="vazio">${adega.length ? 'Nada encontrado com esse filtro.' : 'A adega está vazia. Adicione o primeiro vinho, ou carregue os exemplos para conhecer o app.'}</p>`;
     preencherSelVinho();
@@ -136,7 +136,7 @@
 
   // ---------- Catálogo (Casa Rio Verde, via n8n) ----------
   // Fica em cache no aparelho por 7 dias; só traz dados técnicos (sem preço nem foto)
-  const CHAVE_CAT = 'adega-catalogo-v1';
+  const CHAVE_CAT = 'adega-catalogo-v2';
   let catalogo = null;
   const normaliza = t => String(t || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
   async function carregarCatalogo() {
@@ -147,7 +147,7 @@
     } catch { /* sem cache */ }
     const { itens } = await chamarN8n('catalogo', {});
     catalogo = itens.map(([nome, produtor, pais, tipo, safra, uvas, uvasTexto]) =>
-      ({ nome, produtor, pais, tipo, safra, uvas: uvas ? uvas.split(',') : [], uvasTexto, busca: normaliza(nome + ' ' + produtor) }));
+      ({ nome, produtor, pais, tipo, safra, uvas: uvas ? uvas.split(',') : [], uvasTexto, busca: normaliza([nome, produtor, pais, uvasTexto].join(' ')) }));
     try { localStorage.setItem(CHAVE_CAT, JSON.stringify({ ts: Date.now(), itens: catalogo })); } catch { /* cheio ou bloqueado */ }
     return catalogo;
   }
@@ -167,7 +167,9 @@
   sug.addEventListener('mousedown', e => e.preventDefault());
   sug.addEventListener('click', e => {
     const b = e.target.closest('[data-i]'); if (!b) return;
-    const c = achados[b.dataset.i];
+    preencherDoCatalogo(achados[b.dataset.i]);
+  });
+  function preencherDoCatalogo(c) {
     // A safra fica no campo próprio, não no nome
     frm.nome.value = c.nome.replace(/\s*\b(19|20)\d{2}\b\s*$/, '');
     frm.produtor.value = c.produtor || '';
@@ -179,7 +181,7 @@
     sug.hidden = true;
     $('#catStatus').textContent = 'Preenchido pelo catálogo da Casa Rio Verde.' +
       (c.uvas.length ? '' : ` Uvas: ${c.uvasTexto || 'não informadas'}. Marque abaixo a mais próxima.`);
-  });
+  }
 
   // Compara o que a IA leu com o que foi salvo: é o que mede a precisão da leitura
   function registrarLeitura(v) {
@@ -307,7 +309,7 @@
       .then(() => toast('Obrigado, sua opinião foi registrada.'));
   });
   function perfilHtml(p) {
-    const b = (n, v) => `<div>${n}<b>${'●'.repeat(v)}${'○'.repeat(5 - v)}</b></div>`;
+    const b = (n, v) => `<div>${n}<i style="--v:${v * 20}%"></i></div>`;
     return `<div class="perfil">${b('Corpo', p.corpo)}${b('Acidez', p.acidez)}${b('Tanino', p.tanino)}${b('Doçura', p.docura)}</div>`;
   }
 
@@ -317,20 +319,21 @@
     $('#selVinho').value = adega.some(v => v.id === atual) ? atual : '';
   }
   $('#selUva').innerHTML = '<option value="">Escolha</option>' + UVAS.map(u => `<option value="${u.id}">${esc(u.nome)}</option>`).join('');
-  $('#selVinho').onchange = () => { $('#selUva').value = ''; mostrarVinho(); };
-  $('#selUva').onchange = () => { $('#selVinho').value = ''; mostrarVinho(); };
+  let vinhoAvulso = null;
+  $('#selVinho').onchange = () => { $('#selUva').value = ''; vinhoAvulso = null; mostrarVinho(); };
+  $('#selUva').onchange = () => { $('#selVinho').value = ''; vinhoAvulso = null; mostrarVinho(); };
 
   function mostrarVinho() {
-    const v = adega.find(x => x.id === $('#selVinho').value) || ($('#selUva').value ? { uvas: [$('#selUva').value] } : null);
-    if (!v) { $('#resVinho').innerHTML = '<p class="vazio">Escolha um vinho da adega, ou uma uva, para ver o que servir.</p>'; return; }
+    const v = vinhoAvulso || adega.find(x => x.id === $('#selVinho').value) || ($('#selUva').value ? { uvas: [$('#selUva').value] } : null);
+    if (!v) { $('#resVinho').innerHTML = '<p class="vazio" style="margin-top:18px">Escolha um vinho da adega ou uma uva. No Catálogo, toque em "Harmonizar" em qualquer rótulo.</p>'; return; }
     const p = H.perfilVinho(v), res = H.pratosParaVinho(v);
     contextos = [];
     const ctx = r => ({ vinho: v.nome || nomesUvas(v), uvas: nomesUvas(v), prato: r.prato.nome });
     const bons = res.filter(r => r.nota >= 55), ruins = res.filter(r => r.nota < 40).slice(-4).reverse();
     $('#resVinho').innerHTML = `<div class="ficha"><h3>${esc(v.nome || nomesUvas(v))}</h3>
-        <div class="muted">${TIPOS[p.tipo]} · ${esc(nomesUvas(v))}</div>${perfilHtml(p)}</div>
-      <h2>Bons acompanhamentos</h2>${bons.slice(0, 8).map(r => linha(r.nota, esc(r.prato.nome), esc(r.prato.cat), r, ctx(r))).join('')}
-      ${ruins.length ? `<h2>Melhor evitar</h2>${ruins.map(r => linha(r.nota, esc(r.prato.nome), esc(r.prato.cat), r, ctx(r))).join('')}` : ''}`;
+        <div class="muted">${esc([v.produtor, v.regiao].filter(Boolean).join(' · '))}${v.produtor || v.regiao ? ' · ' : ''}${TIPOS[p.tipo]} · ${esc(nomesUvas(v))}</div>${perfilHtml(p)}</div>
+      <h2>Bons acompanhamentos</h2><div class="bloco">${bons.slice(0, 8).map(r => linha(r.nota, esc(r.prato.nome), esc(r.prato.cat), r, ctx(r))).join('')}</div>
+      ${ruins.length ? `<h2>Melhor evitar</h2><div class="bloco">${ruins.map(r => linha(r.nota, esc(r.prato.nome), esc(r.prato.cat), r, ctx(r))).join('')}</div>` : ''}`;
   }
 
   const cats = [...new Set(PRATOS.map(p => p.cat))];
@@ -340,18 +343,24 @@
 
   function mostrarComida() {
     const id = $('#selPrato').value;
-    if (!id) { $('#resComida').innerHTML = '<p class="vazio">Escolha o prato e veja qual garrafa abrir.</p>'; return; }
+    if (!id) { $('#resComida').innerHTML = '<p class="vazio" style="margin-top:18px">Escolha o prato e veja qual garrafa abrir.</p>'; return; }
     const { adega: daAdega, uvas } = H.vinhosParaPrato(id, adega);
     const prato = H.pratoPorId[id].nome;
     contextos = [];
     const bons = daAdega.filter(r => r.nota >= 55);
+    const bloco = html => `<div class="bloco">${html}</div>`;
+    const loja = (catalogo || []).filter(c => c.uvas.length)
+      .map(c => ({ c, ...H.harmonizar(H.perfilVinho({ uvas: c.uvas, tipo: c.tipo }), H.pratoPorId[id]) }))
+      .sort((a, b) => b.nota - a.nota).slice(0, 6);
     $('#resComida').innerHTML = `<h2>Da sua adega</h2>${
-      bons.length ? bons.slice(0, 6).map(r => linha(r.nota, esc(r.vinho.nome) + (r.vinho.safra ? ' ' + r.vinho.safra : ''),
+      bons.length ? bloco(bons.slice(0, 6).map(r => linha(r.nota, esc(r.vinho.nome) + (r.vinho.safra ? ' ' + r.vinho.safra : ''),
         [esc(nomesUvas(r.vinho)), estrelas(Number(r.vinho.qualidade)), plural(Number(r.vinho.quantidade), 'garrafa', 'garrafas')].filter(Boolean).join(' · '), r,
-        { vinho: r.vinho.nome, uvas: nomesUvas(r.vinho), prato })).join('')
-      : `<p class="vazio">${adega.length ? 'Nenhuma garrafa da adega vai bem com esse prato. Abaixo, o que vale comprar.' : 'Cadastre seus vinhos na Carta para ver sugestões daqui.'}</p>`}
-      <h2>Se for comprar</h2>${uvas.slice(0, 5).map(r => linha(r.nota, esc(r.uva.nome), TIPOS[r.uva.tipo] + ' · ' + esc(r.uva.aromas), r,
-        { vinho: '(uva) ' + r.uva.nome, uvas: r.uva.nome, prato })).join('')}`;
+        { vinho: r.vinho.nome, uvas: nomesUvas(r.vinho), prato })).join(''))
+      : `<p class="vazio">${adega.length ? 'Nenhuma garrafa da adega vai bem com esse prato. Abaixo, o que vale comprar.' : 'Cadastre seus vinhos na Adega para ver sugestões daqui.'}</p>`}
+      ${loja.length ? `<h2>Na Casa Rio Verde</h2>${bloco(loja.map(r => linha(r.nota, esc(r.c.nome),
+        esc([r.c.produtor, r.c.pais, r.c.uvasTexto].filter(Boolean).join(' · ')), r, { vinho: r.c.nome, uvas: r.c.uvasTexto, prato })).join(''))}` : ''}
+      <h2>Uvas que combinam</h2>${bloco(uvas.slice(0, 5).map(r => linha(r.nota, esc(r.uva.nome), TIPOS[r.uva.tipo] + ' · ' + esc(r.uva.aromas), r,
+        { vinho: '(uva) ' + r.uva.nome, uvas: r.uva.nome, prato })).join(''))}`;
   }
 
   // ---------- Guia de uvas ----------
@@ -362,6 +371,52 @@
       <div class="muted">${TIPOS[u.tipo]} · ${esc(u.aromas)}</div>${perfilHtml(p)}
       <div class="muted" style="margin-top:6px"><i style="font-family:var(--serif)">com ${esc(top.toLowerCase())}</i></div></div>`;
   }).join('');
+
+  // ---------- Aba Catálogo ----------
+  const POR_PAGINA = 30;
+  let catVisiveis = POR_PAGINA, catFiltrados = [];
+  $('#catTipo').innerHTML += Object.entries(TIPOS).map(([k, n]) => `<option value="${k}">${n}</option>`).join('');
+  function renderCatalogo() {
+    if (!catalogo) return;
+    const termos = normaliza($('#catBusca').value).split(/\s+/).filter(Boolean);
+    const tipo = $('#catTipo').value, pais = $('#catPais').value;
+    catFiltrados = catalogo.filter(c => (!tipo || c.tipo === tipo) && (!pais || c.pais === pais) && termos.every(t => c.busca.includes(t)));
+    const ver = catFiltrados.slice(0, catVisiveis);
+    $('#catLista').innerHTML = catFiltrados.length
+      ? `<div class="grupo"><span>${catFiltrados.length.toLocaleString('pt-BR')} ${catFiltrados.length === 1 ? 'rótulo' : 'rótulos'}</span></div>
+        <div class="lista">${ver.map(c => `<article class="vinho" style="--cor:var(--${c.tipo || 'tinto'})">
+          <div><h3>${esc(c.nome.replace(/\s*\b(19|20)\d{2}\b\s*$/, ''))}</h3>
+            <div class="det">${esc([c.produtor, c.pais].filter(Boolean).join(', '))}${c.uvasTexto ? ' · ' + esc(c.uvasTexto) : ''}</div></div>
+          <div><div class="safra">${c.safra || 'NV'}</div><div class="qtd">${TIPOS[c.tipo] || ''}</div></div>
+          <div class="acoes">
+            <button class="link" data-cat-harm="${catalogo.indexOf(c)}" ${c.uvas.length ? '' : 'disabled title="Uva ainda não reconhecida pelo app"'}>Harmonizar</button>
+            <button class="link" data-cat-add="${catalogo.indexOf(c)}">Adicionar à adega</button>
+          </div></article>`).join('')}</div>
+        ${catFiltrados.length > catVisiveis ? '<div class="mais"><button class="btn sec" id="catMais">Mostrar mais</button></div>' : ''}`
+      : '<p class="vazio">Nenhum rótulo encontrado.</p>';
+  }
+  const filtrarCatalogo = () => { catVisiveis = POR_PAGINA; renderCatalogo(); };
+  $('#catBusca').oninput = filtrarCatalogo;
+  $('#catTipo').onchange = filtrarCatalogo;
+  $('#catPais').onchange = filtrarCatalogo;
+  $('#catLista').onclick = e => {
+    if (e.target.id === 'catMais') { catVisiveis += POR_PAGINA; renderCatalogo(); return; }
+    const b = e.target.closest('button'); if (!b) return;
+    const c = catalogo[b.dataset.catHarm ?? b.dataset.catAdd];
+    if (b.dataset.catHarm != null) {
+      vinhoAvulso = { nome: c.nome, produtor: c.produtor, regiao: c.pais, tipo: c.tipo, uvas: c.uvas };
+      $('#selVinho').value = ''; $('#selUva').value = '';
+      mostrarVinho(); irPara('vinho');
+    } else {
+      abrirForm(); preencherDoCatalogo(c);
+    }
+  };
+  carregarCatalogo().then(cat => {
+    const paises = [...new Set(cat.map(c => c.pais).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'pt'));
+    $('#catPais').innerHTML += paises.map(p => `<option>${esc(p)}</option>`).join('');
+    $('#catSub').textContent = `${cat.length.toLocaleString('pt-BR')} rótulos da Casa Rio Verde, em Belo Horizonte. Harmonize qualquer um ou leve para a sua adega.`;
+    renderCatalogo(); mostrarComida();
+  }).catch(() => { $('#catLista').innerHTML = '<p class="vazio">Não consegui carregar o catálogo agora. Verifique a conexão e abra a aba de novo.</p>'; });
 
   render(); mostrarVinho(); mostrarComida();
 })();

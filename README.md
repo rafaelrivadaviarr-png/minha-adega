@@ -11,6 +11,7 @@ Não precisa instalar nada: basta abrir o `index.html` no navegador (funciona no
 - **Guia de uvas**: perfil (corpo, acidez, tanino, doçura), aromas e pratos indicados de cerca de 30 uvas.
 - **Backup**: exportar/importar a adega em JSON (os dados ficam salvos no navegador).
 - **Leitura de rótulo com IA**: no cadastro, "📷 Ler rótulo com IA" tira a foto e preenche nome, produtor, região, safra, tipo e uvas.
+- **Catálogo**: aba com todos os rótulos da Casa Rio Verde (busca por nome, produtor ou uva e filtros de tipo e país). Cada rótulo pode ser harmonizado ou adicionado à adega, e a aba "Para o prato" também sugere vinhos da loja.
 - **Catálogo para busca**: ao digitar o nome no cadastro, o app sugere vinhos do catálogo da Casa Rio Verde (BH) e preenche produtor, país, tipo, safra e uvas. O catálogo fica salvo no aparelho por 7 dias.
 - **Feedback do avaliador**: botão "Discordo" em cada harmonização (nota e comentário) e registro automático quando uma leitura da IA é corrigida.
 
