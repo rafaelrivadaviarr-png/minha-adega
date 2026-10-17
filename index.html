@@ -104,6 +104,11 @@ dialog .ft{padding:12px 18px;border-top:1px solid var(--fio);display:flex;gap:8p
 .ia-box img{max-height:110px;margin-top:8px;display:block}
 .discordo{background:none;border:0;padding:0;margin-top:4px;font:inherit;font-size:12px;color:var(--suave);cursor:pointer;text-decoration:underline;text-decoration-color:var(--fio);text-underline-offset:3px}
 .discordo:hover{color:var(--acc)}
+.campo-busca{position:relative}
+.sugestoes{position:absolute;left:0;right:0;top:100%;z-index:10;background:var(--papel);border:1px solid var(--tinta);border-top:0;max-height:260px;overflow:auto}
+.sugestoes button{display:block;width:100%;text-align:left;background:none;border:0;border-bottom:1px solid var(--fio);padding:8px 10px;font:inherit;color:var(--tinta);cursor:pointer}
+.sugestoes button:hover,.sugestoes button.on{background:var(--papel2)}
+.sugestoes small{display:block;color:var(--suave);font-size:12px}
 .vazio{padding:28px 0;color:var(--suave);font-family:var(--serif);font-size:17px;font-style:italic}
 .toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:var(--tinta);color:var(--papel);padding:9px 14px;font-size:14px;z-index:50;max-width:calc(100% - 32px)}
 footer .wrap{border-top:1px solid var(--fio);padding-top:12px;padding-bottom:28px;font-size:12px;color:var(--suave);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
@@ -160,7 +165,7 @@ footer .wrap{border-top:1px solid var(--fio);padding-top:12px;padding-bottom:28p
         <label class="btn" style="margin:0;text-align:center;display:block">Fotografar o rótulo<input type="file" id="fotoRotulo" accept="image/*" capture="environment" hidden></label>
         <div id="iaStatus" class="muted" style="margin-top:6px"></div>
       </div>
-      <div class="full"><label>Nome do vinho *</label><input name="nome" required placeholder="Ex.: Casillero del Diablo Reserva"></div>
+      <div class="full campo-busca"><label>Nome do vinho *</label><input name="nome" required autocomplete="off" placeholder="Comece a digitar para buscar no catálogo"><div id="sugestoes" class="sugestoes" hidden></div><div id="catStatus" class="muted" style="margin-top:4px"></div></div>
       <div><label>Marca / produtor</label><input name="produtor" placeholder="Ex.: Concha y Toro"></div>
       <div><label>País / região</label><input name="regiao" placeholder="Ex.: Chile, Vale Central"></div>
       <div><label>Tipo *</label><select name="tipo" required></select></div>

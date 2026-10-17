@@ -134,6 +134,53 @@
     }
   };
 
+  // ---------- Catálogo (Casa Rio Verde, via n8n) ----------
+  // Fica em cache no aparelho por 7 dias; só traz dados técnicos (sem preço nem foto)
+  const CHAVE_CAT = 'adega-catalogo-v1';
+  let catalogo = null;
+  const normaliza = t => String(t || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+  async function carregarCatalogo() {
+    if (catalogo) return catalogo;
+    try {
+      const c = JSON.parse(localStorage.getItem(CHAVE_CAT));
+      if (c && Date.now() - c.ts < 7 * 864e5) return (catalogo = c.itens);
+    } catch { /* sem cache */ }
+    const { itens } = await chamarN8n('catalogo', {});
+    catalogo = itens.map(([nome, produtor, pais, tipo, safra, uvas, uvasTexto]) =>
+      ({ nome, produtor, pais, tipo, safra, uvas: uvas ? uvas.split(',') : [], uvasTexto, busca: normaliza(nome + ' ' + produtor) }));
+    try { localStorage.setItem(CHAVE_CAT, JSON.stringify({ ts: Date.now(), itens: catalogo })); } catch { /* cheio ou bloqueado */ }
+    return catalogo;
+  }
+
+  const sug = $('#sugestoes');
+  let achados = [];
+  frm.nome.addEventListener('input', async () => {
+    const termos = normaliza(frm.nome.value).split(/\s+/).filter(t => t.length > 1);
+    if (!termos.length || editando) { sug.hidden = true; return; }
+    let cat;
+    try { cat = await carregarCatalogo(); } catch { $('#catStatus').textContent = 'Catálogo indisponível agora.'; return; }
+    achados = cat.filter(c => termos.every(t => c.busca.includes(t))).slice(0, 8);
+    sug.innerHTML = achados.map((c, i) => `<button type="button" data-i="${i}">${esc(c.nome)}<small>${esc([c.produtor, c.pais, c.uvasTexto].filter(Boolean).join(' · '))}</small></button>`).join('');
+    sug.hidden = !achados.length;
+  });
+  frm.nome.addEventListener('blur', () => setTimeout(() => { sug.hidden = true; }, 150));
+  sug.addEventListener('mousedown', e => e.preventDefault());
+  sug.addEventListener('click', e => {
+    const b = e.target.closest('[data-i]'); if (!b) return;
+    const c = achados[b.dataset.i];
+    // A safra fica no campo próprio, não no nome
+    frm.nome.value = c.nome.replace(/\s*\b(19|20)\d{2}\b\s*$/, '');
+    frm.produtor.value = c.produtor || '';
+    frm.regiao.value = c.pais || '';
+    if (c.tipo) frm.tipo.value = c.tipo;
+    frm.safra.value = c.safra || '';
+    uvasSel = new Set(c.uvas);
+    chips();
+    sug.hidden = true;
+    $('#catStatus').textContent = 'Preenchido pelo catálogo da Casa Rio Verde.' +
+      (c.uvas.length ? '' : ` Uvas: ${c.uvasTexto || 'não informadas'}. Marque abaixo a mais próxima.`);
+  });
+
   // Compara o que a IA leu com o que foi salvo: é o que mede a precisão da leitura
   function registrarLeitura(v) {
     if (!leituraIA) return;
@@ -174,6 +221,8 @@
     $('#btnExcluir').hidden = !v;
     uvasSel = new Set(v?.uvas || []);
     leituraIA = null;
+    sug.hidden = true;
+    $('#catStatus').textContent = v ? '' : 'Digite parte do nome ou do produtor para buscar no catálogo.';
     $('#iaStatus').textContent = 'Fotografe o rótulo da frente para preencher os campos automaticamente.';
     if (v) for (const k of ['nome', 'produtor', 'regiao', 'tipo', 'safra', 'qualidade', 'quantidade', 'preco', 'docura', 'obs']) frm[k].value = v[k] ?? '';
     $('#buscaUva').value = '';
