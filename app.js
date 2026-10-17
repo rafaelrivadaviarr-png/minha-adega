@@ -4,8 +4,10 @@
   const TIPOS = { tinto: 'Tinto', branco: 'Branco', rose: 'Rosé', espumante: 'Espumante', sobremesa: 'Sobremesa', fortificado: 'Fortificado' };
   const $ = s => document.querySelector(s);
   const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-  const estrelas = n => n ? '<span class="stars">' + '★'.repeat(n) + '☆'.repeat(5 - n) + '</span>' : '';
-  const corNota = n => n >= 85 ? '#3f5e2c' : n >= 70 ? '#6b7d33' : n >= 55 ? '#a8834a' : n >= 40 ? '#b0602a' : '#8e2430';
+  const estrelas = n => n ? '<span class="nota" title="Sua nota: ' + n + ' de 5">' + '●'.repeat(n) + '○'.repeat(5 - n) + '</span>' : '';
+  const corNota = n => n >= 70 ? 'var(--ok)' : n >= 55 ? 'var(--tinta)' : n >= 40 ? 'var(--warn)' : 'var(--bad)';
+  const GRUPOS = { tinto: 'Tintos', branco: 'Brancos', rose: 'Rosés', espumante: 'Espumantes', sobremesa: 'Sobremesa', fortificado: 'Fortificados' };
+  const plural = (n, um, varios) => `${n} ${n === 1 ? um : varios}`;
   const nomesUvas = v => (v.uvas || []).map(id => H.uvaPorId[id]?.nome || id).join(', ');
 
   // ---------- Persistência (localStorage + backup em JSON) ----------
@@ -64,25 +66,31 @@
       (!termo || [v.nome, v.produtor, v.regiao, nomesUvas(v)].join(' ').toLowerCase().includes(termo)));
     const garrafas = adega.reduce((s, v) => s + Number(v.quantidade || 0), 0);
     const valor = adega.reduce((s, v) => s + Number(v.quantidade || 0) * Number(v.preco || 0), 0);
-    $('#resumo').textContent = adega.length
-      ? `${adega.length} rótulo(s) · ${garrafas} garrafa(s)` + (valor ? ` · R$ ${valor.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} em estoque` : '')
+    $('#resumo').innerHTML = adega.length
+      ? plural(garrafas, 'garrafa', 'garrafas') + (valor ? `<br>R$ ${valor.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : '')
       : '';
-    $('#listaAdega').innerHTML = lista.length ? lista.map(v => {
+    const item = v => {
       const j = H.janela(v);
-      const top = H.pratosParaVinho(v).slice(0, 3).map(r => r.prato.nome.split(' / ')[0]).join(', ');
-      return `<div class="card" style="border-top-color:var(--${v.tipo})">
-        <h3><span class="dot" style="background:var(--${v.tipo})"></span>${esc(v.nome)}</h3>
-        <div class="muted">${esc([v.produtor, v.regiao, v.safra].filter(Boolean).join(' · '))}</div>
-        <div style="margin:6px 0">${estrelas(Number(v.qualidade))}</div>
-        <div><span class="tag">${TIPOS[v.tipo]}</span><span class="tag">${esc(nomesUvas(v))}</span>
-          <span class="tag">${Number(v.quantidade || 0)} garrafa(s)</span>${j ? `<span class="tag ${j.status}">${j.texto}</span>` : ''}</div>
-        <p class="muted" style="margin-top:8px">🍽️ Vai bem com: ${esc(top)}</p>
-        <div class="row" style="margin:10px 0 0">
-          <button class="btn sm" data-harm="${v.id}">Harmonizar</button>
-          <button class="btn sec sm" data-edit="${v.id}">Editar</button>
-          <button class="btn sec sm" data-beber="${v.id}" ${Number(v.quantidade) > 0 ? '' : 'disabled'}>Abri uma 🍾</button>
-        </div></div>`;
-    }).join('') : `<div class="empty card" style="grid-column:1/-1">${adega.length ? 'Nenhum vinho encontrado com esse filtro.' : 'Sua adega está vazia. Clique em <b>+ Adicionar vinho</b> ou em <b>Carregar exemplos</b>.'}</div>`;
+      const top = H.pratosParaVinho(v).slice(0, 3).map(r => r.prato.nome.split(' / ')[0].toLowerCase()).join(', ');
+      const qtd = Number(v.quantidade || 0);
+      return `<article class="vinho">
+        <div><h3>${esc(v.nome)}</h3>
+          <div class="det">${esc([v.produtor, v.regiao].filter(Boolean).join(', '))}${v.produtor || v.regiao ? ' · ' : ''}${esc(nomesUvas(v))}</div></div>
+        <div><div class="safra">${v.safra || 'NV'}</div><div class="qtd">${qtd ? plural(qtd, 'garrafa', 'garrafas') : 'acabou'}</div></div>
+        <div class="extra">${estrelas(Number(v.qualidade))}${v.qualidade && j ? ' &nbsp; ' : ''}${j ? `<span class="est ${j.status}">${j.texto}</span>` : ''}
+          <div><i>com ${esc(top)}</i></div></div>
+        <div class="acoes">
+          <button class="link" data-harm="${v.id}">Harmonizar</button>
+          <button class="link" data-edit="${v.id}">Editar</button>
+          <button class="link" data-beber="${v.id}" ${qtd > 0 ? '' : 'disabled'}>Abri uma garrafa</button>
+        </div></article>`;
+    };
+    $('#listaAdega').innerHTML = lista.length
+      ? Object.keys(GRUPOS).map(t => {
+          const doTipo = lista.filter(v => v.tipo === t);
+          return doTipo.length ? `<h2 class="grupo"><span>${GRUPOS[t]}</span><span>${doTipo.length}</span></h2>${doTipo.map(item).join('')}` : '';
+        }).join('')
+      : `<p class="vazio">${adega.length ? 'Nada encontrado com esse filtro.' : 'A adega está vazia. Adicione o primeiro vinho, ou carregue os exemplos para conhecer o app.'}</p>`;
     preencherSelVinho();
   }
 
@@ -106,23 +114,23 @@
     const arq = e.target.files[0]; e.target.value = '';
     if (!arq) return;
     const st = $('#iaStatus');
-    st.textContent = '⏳ Lendo o rótulo…';
+    st.textContent = 'Lendo o rótulo…';
     try {
       const imagem = await reduzirFoto(arq);
-      st.innerHTML = '⏳ Lendo o rótulo…<img alt="Foto do rótulo" src="' + imagem + '">';
+      st.innerHTML = 'Lendo o rótulo…<img alt="Foto do rótulo" src="' + imagem + '">';
       const { rotulo } = await chamarN8n('ler_rotulo', { imagem });
       for (const k of CAMPOS_IA) if (rotulo[k] != null && rotulo[k] !== '') frm[k].value = rotulo[k];
       if (rotulo.uvas.length) uvasSel = new Set(rotulo.uvas);
       chips();
       leituraIA = { ...rotulo, uvas: [...rotulo.uvas] };
       const conf = Math.round(rotulo.confianca * 100);
-      st.innerHTML = `✅ Leitura feita (confiança ${conf}%). <b>Confira os campos</b> antes de salvar.` +
+      st.innerHTML = `Rótulo lido (confiança de ${conf}%). Confira os campos antes de salvar.` +
         (rotulo.uvas_texto ? `<br>Uvas no rótulo: ${esc(rotulo.uvas_texto)}` : '') +
-        (!rotulo.uvas.length ? '<br>⚠️ Não identifiquei a uva: marque manualmente.' : '') +
+        (!rotulo.uvas.length ? '<br>Não identifiquei a uva. Marque abaixo.' : '') +
         (rotulo.observacoes ? `<br>${esc(rotulo.observacoes)}` : '') +
         '<img alt="Foto do rótulo" src="' + imagem + '">';
     } catch (err) {
-      st.textContent = '❌ ' + err.message;
+      st.textContent = 'Não deu certo: ' + err.message;
     }
   };
 
@@ -166,7 +174,7 @@
     $('#btnExcluir').hidden = !v;
     uvasSel = new Set(v?.uvas || []);
     leituraIA = null;
-    $('#iaStatus').textContent = 'Tire uma foto do rótulo da frente e os campos são preenchidos sozinhos.';
+    $('#iaStatus').textContent = 'Fotografe o rótulo da frente para preencher os campos automaticamente.';
     if (v) for (const k of ['nome', 'produtor', 'regiao', 'tipo', 'safra', 'qualidade', 'quantidade', 'preco', 'docura', 'obs']) frm[k].value = v[k] ?? '';
     $('#buscaUva').value = '';
     chips();
@@ -226,7 +234,7 @@
   let contextos = [];
   function linha(nota, titulo, sub, r, ctx) {
     const i = contextos.push({ ...ctx, nota_app: nota }) - 1;
-    return `<div class="res"><div class="score" style="background:${corNota(nota)}">${nota}<small>${H.rotulo(nota)}</small></div>
+    return `<div class="res"><div class="score" style="color:${corNota(nota)}">${nota}<small>${H.rotulo(nota).toLowerCase()}</small></div>
       <div><strong>${titulo}</strong>${sub ? `<div class="muted">${sub}</div>` : ''}
       <ul class="why">${r.pros.slice(0, 3).map(t => `<li class="p">${esc(t)}</li>`).join('')}${r.contras.slice(0, 2).map(t => `<li class="c">${esc(t)}</li>`).join('')}</ul>
       <button class="discordo" data-ctx="${i}">Discordo</button></div></div>`;
@@ -247,63 +255,63 @@
     const d = Object.fromEntries(new FormData(frmFb));
     gravarPref('adega-avaliador', d.avaliador.trim());
     enviarFeedback({ tipo: 'harmonizacao', avaliador: d.avaliador.trim(), ...ctxFb, nota_avaliador: Number(d.nota), comentario: d.comentario.trim() })
-      .then(() => toast('Obrigado! Feedback registrado.'));
+      .then(() => toast('Obrigado, sua opinião foi registrada.'));
   });
   function perfilHtml(p) {
-    const b = (n, v) => `<span>${n}</span><div class="bar"><i style="width:${v * 20}%"></i></div>`;
-    return `<div class="prof">${b('Corpo', p.corpo)}${b('Acidez', p.acidez)}${b('Tanino', p.tanino)}${b('Doçura', p.docura)}</div>`;
+    const b = (n, v) => `<div>${n}<b>${'●'.repeat(v)}${'○'.repeat(5 - v)}</b></div>`;
+    return `<div class="perfil">${b('Corpo', p.corpo)}${b('Acidez', p.acidez)}${b('Tanino', p.tanino)}${b('Doçura', p.docura)}</div>`;
   }
 
   function preencherSelVinho() {
     const atual = $('#selVinho').value;
-    $('#selVinho').innerHTML = '<option value="">— escolha —</option>' + adega.map(v => `<option value="${v.id}">${esc(v.nome)}${v.safra ? ' ' + v.safra : ''}</option>`).join('');
+    $('#selVinho').innerHTML = '<option value="">Escolha</option>' + adega.map(v => `<option value="${v.id}">${esc(v.nome)}${v.safra ? ' ' + v.safra : ''}</option>`).join('');
     $('#selVinho').value = adega.some(v => v.id === atual) ? atual : '';
   }
-  $('#selUva').innerHTML = '<option value="">— escolha —</option>' + UVAS.map(u => `<option value="${u.id}">${esc(u.nome)}</option>`).join('');
+  $('#selUva').innerHTML = '<option value="">Escolha</option>' + UVAS.map(u => `<option value="${u.id}">${esc(u.nome)}</option>`).join('');
   $('#selVinho').onchange = () => { $('#selUva').value = ''; mostrarVinho(); };
   $('#selUva').onchange = () => { $('#selVinho').value = ''; mostrarVinho(); };
 
   function mostrarVinho() {
     const v = adega.find(x => x.id === $('#selVinho').value) || ($('#selUva').value ? { uvas: [$('#selUva').value] } : null);
-    if (!v) { $('#resVinho').innerHTML = '<div class="empty card">Escolha um vinho da adega ou uma uva para ver as harmonizações.</div>'; return; }
+    if (!v) { $('#resVinho').innerHTML = '<p class="vazio">Escolha um vinho da adega, ou uma uva, para ver o que servir.</p>'; return; }
     const p = H.perfilVinho(v), res = H.pratosParaVinho(v);
     contextos = [];
     const ctx = r => ({ vinho: v.nome || nomesUvas(v), uvas: nomesUvas(v), prato: r.prato.nome });
     const bons = res.filter(r => r.nota >= 55), ruins = res.filter(r => r.nota < 40).slice(-4).reverse();
-    $('#resVinho').innerHTML = `<div class="card"><h3>${esc(v.nome || nomesUvas(v))}</h3>
+    $('#resVinho').innerHTML = `<div class="ficha"><h3>${esc(v.nome || nomesUvas(v))}</h3>
         <div class="muted">${TIPOS[p.tipo]} · ${esc(nomesUvas(v))}</div>${perfilHtml(p)}</div>
-      <h2>Melhores pratos</h2><div class="card">${bons.slice(0, 8).map(r => linha(r.nota, esc(r.prato.nome), esc(r.prato.cat), r, ctx(r))).join('')}</div>
-      ${ruins.length ? `<h2>Evite</h2><div class="card">${ruins.map(r => linha(r.nota, esc(r.prato.nome), esc(r.prato.cat), r, ctx(r))).join('')}</div>` : ''}`;
+      <h2>Bons acompanhamentos</h2>${bons.slice(0, 8).map(r => linha(r.nota, esc(r.prato.nome), esc(r.prato.cat), r, ctx(r))).join('')}
+      ${ruins.length ? `<h2>Melhor evitar</h2>${ruins.map(r => linha(r.nota, esc(r.prato.nome), esc(r.prato.cat), r, ctx(r))).join('')}` : ''}`;
   }
 
   const cats = [...new Set(PRATOS.map(p => p.cat))];
-  $('#selPrato').innerHTML = '<option value="">— escolha o prato —</option>' + cats.map(c =>
+  $('#selPrato').innerHTML = '<option value="">Escolha o prato</option>' + cats.map(c =>
     `<optgroup label="${esc(c)}">${PRATOS.filter(p => p.cat === c).map(p => `<option value="${p.id}">${esc(p.nome)}</option>`).join('')}</optgroup>`).join('');
   $('#selPrato').onchange = mostrarComida;
 
   function mostrarComida() {
     const id = $('#selPrato').value;
-    if (!id) { $('#resComida').innerHTML = '<div class="empty card">Escolha um prato para ver qual vinho abrir.</div>'; return; }
+    if (!id) { $('#resComida').innerHTML = '<p class="vazio">Escolha o prato e veja qual garrafa abrir.</p>'; return; }
     const { adega: daAdega, uvas } = H.vinhosParaPrato(id, adega);
     const prato = H.pratoPorId[id].nome;
     contextos = [];
     const bons = daAdega.filter(r => r.nota >= 55);
-    $('#resComida').innerHTML = `<h2>Da sua adega</h2><div class="card">${
+    $('#resComida').innerHTML = `<h2>Da sua adega</h2>${
       bons.length ? bons.slice(0, 6).map(r => linha(r.nota, esc(r.vinho.nome) + (r.vinho.safra ? ' ' + r.vinho.safra : ''),
-        [esc(nomesUvas(r.vinho)), estrelas(Number(r.vinho.qualidade)), `${r.vinho.quantidade} garrafa(s)`].filter(Boolean).join(' · '), r,
+        [esc(nomesUvas(r.vinho)), estrelas(Number(r.vinho.qualidade)), plural(Number(r.vinho.quantidade), 'garrafa', 'garrafas')].filter(Boolean).join(' · '), r,
         { vinho: r.vinho.nome, uvas: nomesUvas(r.vinho), prato })).join('')
-      : `<p class="muted">${adega.length ? 'Nenhum vinho da adega combina bem com esse prato. Veja abaixo o que vale comprar.' : 'Cadastre seus vinhos na aba Adega para ver sugestões daqui.'}</p>`}</div>
-      <h2>Uvas ideais (para comprar)</h2><div class="card">${uvas.slice(0, 5).map(r => linha(r.nota, esc(r.uva.nome), TIPOS[r.uva.tipo] + ' · ' + esc(r.uva.aromas), r,
-        { vinho: '(uva) ' + r.uva.nome, uvas: r.uva.nome, prato })).join('')}</div>`;
+      : `<p class="vazio">${adega.length ? 'Nenhuma garrafa da adega vai bem com esse prato. Abaixo, o que vale comprar.' : 'Cadastre seus vinhos na Carta para ver sugestões daqui.'}</p>`}
+      <h2>Se for comprar</h2>${uvas.slice(0, 5).map(r => linha(r.nota, esc(r.uva.nome), TIPOS[r.uva.tipo] + ' · ' + esc(r.uva.aromas), r,
+        { vinho: '(uva) ' + r.uva.nome, uvas: r.uva.nome, prato })).join('')}`;
   }
 
   // ---------- Guia de uvas ----------
   $('#listaUvas').innerHTML = UVAS.map(u => {
     const p = H.perfilVinho({ uvas: [u.id] });
-    const top = H.pratosParaVinho({ uvas: [u.id] }).slice(0, 4).map(r => r.prato.nome.split(' / ')[0]).join(', ');
-    return `<div class="card"><h3><span class="dot" style="background:var(--${u.tipo})"></span>${esc(u.nome)}</h3>
+    const top = H.pratosParaVinho({ uvas: [u.id] }).slice(0, 3).map(r => r.prato.nome.split(' / ')[0]).join(', ');
+    return `<div class="uva"><h3>${esc(u.nome)}</h3>
       <div class="muted">${TIPOS[u.tipo]} · ${esc(u.aromas)}</div>${perfilHtml(p)}
-      <p class="muted" style="margin-top:8px">🍽️ ${esc(top)}</p></div>`;
+      <div class="muted" style="margin-top:6px"><i style="font-family:var(--serif)">com ${esc(top.toLowerCase())}</i></div></div>`;
   }).join('');
 
   render(); mostrarVinho(); mostrarComida();
