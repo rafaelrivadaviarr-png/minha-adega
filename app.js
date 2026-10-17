@@ -5,7 +5,7 @@
   const $ = s => document.querySelector(s);
   const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const estrelas = n => n ? '<span class="stars">' + '★'.repeat(n) + '☆'.repeat(5 - n) + '</span>' : '';
-  const corNota = n => n >= 85 ? 'var(--ok)' : n >= 70 ? '#4f8a3a' : n >= 55 ? 'var(--warn)' : n >= 40 ? '#c0632a' : 'var(--bad)';
+  const corNota = n => n >= 85 ? '#3f5e2c' : n >= 70 ? '#6b7d33' : n >= 55 ? '#a8834a' : n >= 40 ? '#b0602a' : '#8e2430';
   const nomesUvas = v => (v.uvas || []).map(id => H.uvaPorId[id]?.nome || id).join(', ');
 
   // ---------- Persistência (localStorage + backup em JSON) ----------
@@ -70,7 +70,7 @@
     $('#listaAdega').innerHTML = lista.length ? lista.map(v => {
       const j = H.janela(v);
       const top = H.pratosParaVinho(v).slice(0, 3).map(r => r.prato.nome.split(' / ')[0]).join(', ');
-      return `<div class="card">
+      return `<div class="card" style="border-top-color:var(--${v.tipo})">
         <h3><span class="dot" style="background:var(--${v.tipo})"></span>${esc(v.nome)}</h3>
         <div class="muted">${esc([v.produtor, v.regiao, v.safra].filter(Boolean).join(' · '))}</div>
         <div style="margin:6px 0">${estrelas(Number(v.qualidade))}</div>
