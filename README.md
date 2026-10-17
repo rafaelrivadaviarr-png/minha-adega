@@ -10,6 +10,15 @@ Não precisa instalar nada: basta abrir o `index.html` no navegador (funciona no
 - **Comida → Vinho**: qual vinho da adega abrir para um prato e quais uvas vale comprar.
 - **Guia de uvas**: perfil (corpo, acidez, tanino, doçura), aromas e pratos indicados de cerca de 30 uvas.
 - **Backup**: exportar/importar a adega em JSON (os dados ficam salvos no navegador).
+- **Leitura de rótulo com IA**: no cadastro, "📷 Ler rótulo com IA" tira a foto e preenche nome, produtor, região, safra, tipo e uvas.
+- **Feedback do avaliador**: botão "Discordo" em cada harmonização (nota e comentário) e registro automático quando uma leitura da IA é corrigida.
+
+## Integração (n8n)
+O app chama o webhook do n8n definido em `config.js` (`acao: ler_rotulo` ou `acao: feedback`).
+- Fluxo: **Minha Adega - Leitura de Rotulo e Feedback** (n8n da GDEL).
+- A IA é chamada pelo OpenRouter com a credencial `OpenRouter - minha-adega` (limite de US$ 5). A chave fica só no n8n.
+- O feedback vai para a data table `adega_feedback`: `tipo` = `harmonizacao`, `leitura_certa` ou `leitura_corrigida`.
+- O modelo de visão fica no nó "Normalizar Pedido" (campo `modelo`).
 
 ## Como funciona a harmonização
 `engine.js` compara o perfil do vinho (média das uvas, com ajuste pelo tipo) com o do prato e aplica regras clássicas de sommelier:
